@@ -1,0 +1,14 @@
+{
+  "name": "discordbot",
+  "version": "1.2.0",
+  "description": "Discord bot for PS server",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gytis Oksas",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.3.1"
+  }
+}
