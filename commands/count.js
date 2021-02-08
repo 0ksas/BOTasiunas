@@ -14,11 +14,11 @@ module.exports = {
             }
             i++;
         })
-        let roleId = message.guild.roles.cache.find(role => role.name === roleName);
+        let role = message.guild.roles.cache.find(role => role.name === roleName);
 
         if (args.length == 0) {
             message.channel.send(user + " Count of users in the server: " + message.guild.memberCount);
-        } else if (roleId) {
+        } else if (role) {
             //This part is obviously broken
             //It used to work correctly is the past Discord.js versions.
             //let count = message.guild.members.cache.filter(m => m.roles.cache.find(r => r.name === roleName)).size;
