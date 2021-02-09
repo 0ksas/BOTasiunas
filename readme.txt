@@ -3,4 +3,4 @@ credentials.js file is needed. In it a Credentials class with a "login" property
 
 In the bot developer portal Privileged Gateway Intents part, you need to enable SERVER MEMBERS INTENT option.
 
-npm-fetch needs to be installed for the count gif response to work
+node-fetch needs to be installed for the count gif response to work
