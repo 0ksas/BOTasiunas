@@ -2,6 +2,7 @@ module.exports = {
     name: 'count',
     description: "Outputs the count of specified group",
     async execute(message, args) {
+        const Credentials = require('./../Credentials/credentials.js')
         let user = message.member;
         user = user.toString();
         let roleName = "";
@@ -21,7 +22,19 @@ module.exports = {
         } else if (role) {
             await message.guild.members.fetch(); //gets all of the members into the cache
             let count = message.guild.members.cache.filter(m => m.roles.cache.find(r => r.name === roleName)).size; //filters ones who have the given role in their role collection
-            message.channel.send(user + " Count of users in " + roleName + ": " + count); //sends message
+            if (count > 40) {
+                message.channel.send(user + " Count of users in " + roleName + ": " + count); //sends message
+            } else {
+                const fetch = require('node-fetch');
+                let credentials = new Credentials();
+                let url = `https://api.tenor.com/v1/search?q=${count}&key=H13UA21L5LHF&limit=1`
+                let response = await fetch(url);
+                let json = await response.json();
+                console.log(json);
+                message.channel.send(json.results[0].url);
+
+            }
+            
         } else {
             message.channel.send(user + " No such role found.");
         }
