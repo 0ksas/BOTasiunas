@@ -1,5 +1,5 @@
 ﻿const Discord = require('discord.js');
-const Credentials = require('./credentials.js')
+const Credentials = require('./Credentials/credentials.js')
 
 const client = new Discord.Client();
 
