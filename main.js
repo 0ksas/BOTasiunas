@@ -68,6 +68,9 @@ client.on('message', message => {
             case 'sauliunas':
                 client.commands.get('sauliunas').execute(message, args)
                 break;
+            case 'petrauskas':
+                client.commands.get('petrauskas').execute(message, args)
+                break;
         }
     }
 })
