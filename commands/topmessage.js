@@ -25,7 +25,7 @@ module.exports = {
 
 
         });
-        message.channel.send(user + " This is the most reacted to message in this channel");
+        message.channel.send(user + " This is the most reacted to message in this channel. With a top unique reaction count of: " + maxCount);
         if (topMessage.pinned) topMessage.unpin({});
         topMessage.pin({ reason: user + 'This is the most reacted to message in this channel' });
         
