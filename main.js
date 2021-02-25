@@ -71,6 +71,9 @@ client.on('message', message => {
             case 'petrauskas':
                 client.commands.get('petrauskas').execute(message, args)
                 break;
+            case 'topmessage':
+                client.commands.get('topmessage').execute(message, args)
+                break;
         }
     }
 })

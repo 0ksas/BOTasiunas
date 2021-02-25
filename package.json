@@ -9,6 +9,7 @@
   "author": "Gytis Oksas",
   "license": "ISC",
   "dependencies": {
+    "discord-fetch-all": "^3.0.2",
     "discord.js": "^12.3.1",
     "node-fetch": "^2.6.1"
   }
