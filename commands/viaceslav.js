@@ -1,7 +1,7 @@
 module.exports = {
     name: 'viaceslav',
-    description: "haskell govno",
+    description: "haskell",
     execute(message, args) {
-        message.channel.send("Tai va...", { files: ["./Images/vipo.jpg"] });
+        message.channel.send("", { files: ["./Images/vipo.jpg"] });
     }
 }

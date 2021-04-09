@@ -56,9 +56,6 @@ client.on('message', message => {
             case 'birštunas':
                 client.commands.get('birstunas').execute(message, args)
                 break;
-            case 'hornyteen':
-                client.commands.get('hornyTeen').execute(message, args)
-                break;
             case 'manifest':
                 client.commands.get('manifest').execute(message, args)
                 break;
