@@ -52,7 +52,7 @@ client.on('ready', () => {
             let reactionsList = message.reactions
             let reactions = reactionsList.cache.find(r => r.emoji.name == "Hero_of_the_Village")
             if (reactions != undefined) {
-                if (reactions.count > Math.floor(message.guild.memberCount / 10)) {
+                if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
                     console.log("Heroed of the villaged")
                     let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
                     message.member.roles.add(role).catch(console.error)
@@ -74,10 +74,11 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
+    console.log(Math.floor(message.guild.memberCount / 10))
     messages.push(message)
     if (message.author.bot) return;
     else if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
-
+        
         
         const args = message.content.slice(prefix.length).split(/ +/);
         const command = args.shift().toLowerCase();
