@@ -10,6 +10,9 @@ const fs = require('fs');
 
 client.commands = new Discord.Collection();
 
+const messages = new Array();
+const heroedUsers = new Array();
+
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -20,11 +23,62 @@ client.once('ready', () => {
     console.log('PS bot is online!');
 });
 
+client.on('ready', () => {
+    client.setInterval(() => {
+        console.log("Checking")
+
+        messages.forEach(message => {
+            let currentTime = new Date();
+            let messageTime = message.createdAt;
+            if ((currentTime - messageTime) > 3600000) {
+                let index = messages.indexOf(message)
+                if (index > -1) {
+                    messages.splice(index, 1)
+                }
+                return;
+            }
+
+            heroedUsers.forEach(event => {
+                if ((currentTime - event.time) > 43200000) {
+                    let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village");
+                    event.member.roles.remove(role.id);
+                    let index = heroedUsers.indexOf(event.member)
+                    if (index > -1) {
+                        heroedUsers.splice(index, 1)
+                    }
+                }
+            })
+
+            let reactionsList = message.reactions
+            let reactions = reactionsList.cache.find(r => r.emoji.name == "Hero_of_the_Village")
+            if (reactions != undefined) {
+                if (reactions.count > Math.floor(message.guild.memberCount / 10)) {
+                    console.log("Heroed of the villaged")
+                    let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
+                    message.member.roles.add(role).catch(console.error)
+                    heroedUsers.push({
+                        member: message.member,
+                        time: currentTime
+                    })
+                    console.log(new Date())
+
+                    let index = messages.indexOf(message)
+                    if (index > -1) {
+                        messages.splice(index, 1)
+                    }
+                }
+                
+            }
+        })
+    }, 10000)
+})
+
 client.on('message', message => {
+    messages.push(message)
     if (message.author.bot) return;
     else if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
 
-
+        
         const args = message.content.slice(prefix.length).split(/ +/);
         const command = args.shift().toLowerCase();
 
