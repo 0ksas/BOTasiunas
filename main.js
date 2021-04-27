@@ -1,17 +1,24 @@
-﻿const Discord = require('discord.js');
+﻿
+const Discord = require('discord.js');
 const Credentials = require('./Credentials/credentials.js')
 
 const client = new Discord.Client();
 
+/*
+ *TODO:
+ * check for multiple instances
+ * on ready fetch messages from past hour
+ */
+
 const prefix = '!';
 const mistakePrefix = 'Ą';
-
+const savePath = './cache/cache.js';
 const fs = require('fs');
 
 client.commands = new Discord.Collection();
 
 const messages = new Array();
-const heroedUsers = new Array();
+var heroedUsers = new Array();
 
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -19,16 +26,49 @@ for (const file of commandFiles) {
 
     client.commands.set(command.name, command);
 }
+
 client.once('ready', () => {
+    try {
+        const fs = require('fs');
+        let text = fs.readFileSync(savePath);
+        heroedUsers = JSON.parse(text)
+        console.log(heroedUsers)
+    } catch (err) {
+
+        console.error(err)
+    }
     console.log('PS bot is online!');
 });
 
 client.on('ready', () => {
     client.setInterval(() => {
         console.log("Checking")
+        let currentTime = new Date();
+
+        heroedUsers.forEach(async function (event) {
+
+            if ((currentTime - Date.parse(event.time)) > 20000) {
+
+                //Getting the guild from the ID
+                let guild = await client.guilds.fetch(event.member.guildID)
+                let role = guild.roles.cache.find(role => role.name === "Hero of the Village");
+
+                //Getting the members since all of them might not be loaded
+                await guild.members.fetch();
+                let user = guild.members.cache.find(user => user.id === event.member.userID)
+
+                //Removing the role
+                user.roles.remove(role.id);
+                let index = heroedUsers.indexOf(event)
+                if (index > -1) {
+                    heroedUsers.splice(index, 1)
+                }
+                saveData(savePath, heroedUsers)
+            }
+        })
 
         messages.forEach(message => {
-            let currentTime = new Date();
+
             let messageTime = message.createdAt;
             if ((currentTime - messageTime) > 3600000) {
                 let index = messages.indexOf(message)
@@ -38,21 +78,14 @@ client.on('ready', () => {
                 return;
             }
 
-            heroedUsers.forEach(event => {
-                if ((currentTime - event.time) > 43200000) {
-                    let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village");
-                    event.member.roles.remove(role.id);
-                    let index = heroedUsers.indexOf(event.member)
-                    if (index > -1) {
-                        heroedUsers.splice(index, 1)
-                    }
-                }
-            })
+            
 
             let reactionsList = message.reactions
             let reactions = reactionsList.cache.find(r => r.emoji.name == "Hero_of_the_Village")
             if (reactions != undefined) {
                 if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
+                 
+
                     console.log("Heroed of the villaged")
                     let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
                     message.member.roles.add(role).catch(console.error)
@@ -60,6 +93,7 @@ client.on('ready', () => {
                         member: message.member,
                         time: currentTime
                     })
+                    saveData(savePath, heroedUsers)
                     console.log(new Date())
 
                     let index = messages.indexOf(message)
@@ -130,6 +164,14 @@ client.on('message', message => {
     }
 })
 
+function saveData(path, array) {
+    const fs = require('fs');
+    try {
+        fs.writeFileSync(path, JSON.stringify(array));
+    } catch (err) {
+        console.error(err)
+    }
+}
 
 const credentials = new Credentials();
 client.login(credentials.login);

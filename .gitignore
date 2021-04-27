@@ -104,3 +104,4 @@ dist
 .tern-port
 /Credentials/credentials.js
 /.vs
+/cache/cache.js
