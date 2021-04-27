@@ -4,12 +4,6 @@ const Credentials = require('./Credentials/credentials.js')
 
 const client = new Discord.Client();
 
-/*
- *TODO:
- * check for multiple instances
- * on ready fetch messages from past hour
- */
-
 const prefix = '!';
 const mistakePrefix = 'Ą';
 const savePath = './cache/cache.js';
@@ -30,9 +24,15 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     try {
         const fs = require('fs');
-        let text = fs.readFileSync(savePath);
-        heroedUsers = JSON.parse(text)
-        console.log(heroedUsers)
+        if (fs.existsSync(savePath)) {
+            console.log("a")
+            let text = fs.readFileSync(savePath);
+            heroedUsers = JSON.parse(text)
+        } else {
+            console.log("b")
+            fs.openSync(savePath, 'w')
+        }
+        
     } catch (err) {
 
         console.error(err)
@@ -47,7 +47,7 @@ client.on('ready', () => {
 
         heroedUsers.forEach(async function (event) {
 
-            if ((currentTime - Date.parse(event.time)) > 20000) {
+            if ((currentTime - Date.parse(event.time)) > 43200000) {
 
                 //Getting the guild from the ID
                 let guild = await client.guilds.fetch(event.member.guildID)
