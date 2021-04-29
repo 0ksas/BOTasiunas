@@ -15,8 +15,15 @@ const messages = new Array();
 var heroedUsers = new Array();
 
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+const dmCommandFiles = fs.readdirSync('./commands_dm/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
+
+    client.commands.set(command.name, command);
+}
+
+for (const file of dmCommandFiles) {
+    const command = require(`./commands_dm/${file}`);
 
     client.commands.set(command.name, command);
 }
@@ -25,11 +32,9 @@ client.once('ready', () => {
     try {
         const fs = require('fs');
         if (fs.existsSync(savePath)) {
-            console.log("a")
             let text = fs.readFileSync(savePath);
-            heroedUsers = JSON.parse(text)
+            if(text.length > 0) heroedUsers = JSON.parse(text)
         } else {
-            console.log("b")
             fs.openSync(savePath, 'w')
         }
         
@@ -83,24 +88,29 @@ client.on('ready', () => {
             let reactionsList = message.reactions
             let reactions = reactionsList.cache.find(r => r.emoji.name == "Hero_of_the_Village")
             if (reactions != undefined) {
-                if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
-                 
+                try {
+                    if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
 
-                    console.log("Heroed of the villaged")
-                    let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
-                    message.member.roles.add(role).catch(console.error)
-                    heroedUsers.push({
-                        member: message.member,
-                        time: currentTime
-                    })
-                    saveData(savePath, heroedUsers)
-                    console.log(new Date())
 
-                    let index = messages.indexOf(message)
-                    if (index > -1) {
-                        messages.splice(index, 1)
+                        console.log("Heroed of the villaged")
+                        let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
+                        message.member.roles.add(role).catch(console.error)
+                        heroedUsers.push({
+                            member: message.member,
+                            time: currentTime
+                        })
+                        saveData(savePath, heroedUsers)
+                        console.log(new Date())
+
+                        let index = messages.indexOf(message)
+                        if (index > -1) {
+                            messages.splice(index, 1)
+                        }
                     }
+                } catch (err) {
+                    console.error(err)
                 }
+                
                 
             }
         })
@@ -108,10 +118,32 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
-    console.log(Math.floor(message.guild.memberCount / 10))
-    messages.push(message)
     if (message.author.bot) return;
-    else if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
+    if (
+        message.channel.type == "dm" &&
+        (message.content.startsWith(prefix) ||
+            message.content.startsWith(mistakePrefix))
+    ) {
+        const args = message.content.slice(prefix.length).split(/ +/);
+        const command = args.shift().toLowerCase();
+
+        switch (command) {
+            case 'anon':
+                client.commands.get('anon').execute(message, args, client);
+                break;
+            case 'help':
+                client.commands.get('helpDm').execute(message, args);
+                break;
+            default:
+                message.channel.send("Unrecognised message.")
+                break;
+        }
+        return;
+    }
+
+    messages.push(message)
+    
+    if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
         
         
         const args = message.content.slice(prefix.length).split(/ +/);
@@ -160,6 +192,9 @@ client.on('message', message => {
             case 'topmessage':
                 client.commands.get('topmessage').execute(message, args)
                 break;
+            case 'repo':
+                client.commands.get('repo').execute(message, args)
+                break; 
         }
     }
 })

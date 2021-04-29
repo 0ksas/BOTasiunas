@@ -1,13 +1,13 @@
 ﻿module.exports = {
     name: 'help',
-    description: "Outputs all of the help commands",
+    description: "Outputs all of the help commands for guild messages.",
     execute(message, args) {
         message.channel.send(
             '!help - see all commands\n' +
-            '!grupė [1-5] - pridėti į grupę\n' +
-            '!remove - prašyti išėmimo iš grupės.\n' +
-            '!count [grupė/rolė] - sužinoti kiek grupėje/rolėje yra vartotojų (palikti tuščią - skaičiuoti viso serverio).\n' + 
-            '!valaitis [1-2 skaičiai] - sugeneruoja atsitiktinį skaičių duotame intervale arba nuo 0 iki duoto skaičiaus.'
+            '!grupė [1-5] - adds you to selected group\n' +
+            '!remove - removes you from your group.\n' +
+            '!count [role] - find out how many users are in that role (empty - claculates users in the whole server).\n' +
+            '!topmessage - find the most reacted to message on that channel'
         )
     }
 }
