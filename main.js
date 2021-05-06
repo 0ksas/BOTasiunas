@@ -18,13 +18,11 @@ const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith(
 const dmCommandFiles = fs.readdirSync('./commands_dm/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
-
     client.commands.set(command.name, command);
 }
 
 for (const file of dmCommandFiles) {
     const command = require(`./commands_dm/${file}`);
-
     client.commands.set(command.name, command);
 }
 
@@ -38,9 +36,7 @@ client.once('ready', () => {
         } else {
             fs.openSync(savePath, 'w')
         }
-        
     } catch (err) {
-
         console.error(err)
     }
     console.log('PS bot is online!');
@@ -64,12 +60,13 @@ client.on('ready', () => {
 
                 //Getting the members since all of them might not be loaded
                 try {
-
                     let role = guild.roles.cache.find(role => role.name === "Hero of the Village");
-
                     await guild.members.fetch();
+
+                    //Finding the user object from his ID
                     let user = guild.members.cache.find(user => user.id === event.member.userID)
                     if (user == undefined) user = guild.members.cache.find(user => user.id === event.member.id)
+
                     //Removing the role
                     user.roles.remove(role.id);
                     let index = heroedUsers.indexOf(event)
@@ -88,6 +85,7 @@ client.on('ready', () => {
 
         messages.forEach(message => {
 
+            //Removing messages from the list if they are older than 1 hour
             let messageTime = message.createdAt;
             if ((currentTime - messageTime) > 3600000) {
                 let index = messages.indexOf(message)
@@ -97,35 +95,41 @@ client.on('ready', () => {
                 return;
             }
 
-            
-
+            //Getting the message reactions
             let reactionsList = message.reactions
             let reactions = reactionsList.cache.find(r => r.emoji.name == "Hero_of_the_Village")
             if (reactions != undefined) {
                 try {
+                    //Giving the role if 10% of the server has reacted
                     if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
 
-
                         console.log("Heroed of the villaged: " + message.member.displayName)
+
+                        //Finding the role and giving it to the user.
                         let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
                         message.member.roles.add(role).catch(console.error)
 
-                        console.log(message.member.id)
+                        //Removing previous messages to prolong the HOTV role
                         let duplicates = heroedUsers.filter(item => (item.member.userID == message.member.id || item.member.id == message.member.id))
-                        console.log(duplicates)
+
                         duplicates.forEach(item => {
                             let index = heroedUsers.indexOf(item)
                             if (index > -1) {
                                 heroedUsers.splice(item, 1);
                             }
                         });
+
+                        //Pushing the user to the list
                         heroedUsers.push({
                             member: message.member,
                             time: currentTime
                         })
+
+                        //Saving the cached data
                         saveData(savePath, heroedUsers)
                         console.log(new Date())
 
+                        //Removing the message from the list
                         let index = messages.indexOf(message)
                         if (index > -1) {
                             messages.splice(index, 1)
@@ -133,9 +137,7 @@ client.on('ready', () => {
                     }
                 } catch (err) {
                     console.error(err)
-                }
-                
-                
+                }   
             }
         })
     }, 10000)
