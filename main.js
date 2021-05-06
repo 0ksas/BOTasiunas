@@ -29,6 +29,7 @@ for (const file of dmCommandFiles) {
 }
 
 client.once('ready', () => {
+
     try {
         const fs = require('fs');
         if (fs.existsSync(savePath)) {
@@ -47,28 +48,41 @@ client.once('ready', () => {
 
 client.on('ready', () => {
     client.setInterval(() => {
-        console.log("Checking")
         let currentTime = new Date();
 
         heroedUsers.forEach(async function (event) {
-
             if ((currentTime - Date.parse(event.time)) > 43200000) {
 
                 //Getting the guild from the ID
-                let guild = await client.guilds.fetch(event.member.guildID)
-                let role = guild.roles.cache.find(role => role.name === "Hero of the Village");
+                let guild
+                //This has to be caught and called again because saved and kept in memory lists have different ID names
+                try {
+                    guild = await client.guilds.fetch(event.member.guildID)
+                } catch (err) {
+                    guild = await client.guilds.fetch(event.member.guild.id)
+                }
 
                 //Getting the members since all of them might not be loaded
-                await guild.members.fetch();
-                let user = guild.members.cache.find(user => user.id === event.member.userID)
+                try {
 
-                //Removing the role
-                user.roles.remove(role.id);
-                let index = heroedUsers.indexOf(event)
-                if (index > -1) {
-                    heroedUsers.splice(index, 1)
+                    let role = guild.roles.cache.find(role => role.name === "Hero of the Village");
+
+                    await guild.members.fetch();
+                    let user = guild.members.cache.find(user => user.id === event.member.userID)
+                    if (user == undefined) user = guild.members.cache.find(user => user.id === event.member.id)
+                    //Removing the role
+                    user.roles.remove(role.id);
+                    let index = heroedUsers.indexOf(event)
+                    if (index > -1) {
+                        heroedUsers.splice(index, 1)
+                    }
+                    saveData(savePath, heroedUsers)
+                } catch (err) {
+                    console.error(err)
+                    console.log(guild)
                 }
-                saveData(savePath, heroedUsers)
+
+                
             }
         })
 
@@ -92,9 +106,19 @@ client.on('ready', () => {
                     if (reactions.count >= Math.floor(message.guild.memberCount / 10)) {
 
 
-                        console.log("Heroed of the villaged")
+                        console.log("Heroed of the villaged: " + message.member.displayName)
                         let role = message.guild.roles.cache.find(role => role.name === "Hero of the Village")
                         message.member.roles.add(role).catch(console.error)
+
+                        console.log(message.member.id)
+                        let duplicates = heroedUsers.filter(item => (item.member.userID == message.member.id || item.member.id == message.member.id))
+                        console.log(duplicates)
+                        duplicates.forEach(item => {
+                            let index = heroedUsers.indexOf(item)
+                            if (index > -1) {
+                                heroedUsers.splice(item, 1);
+                            }
+                        });
                         heroedUsers.push({
                             member: message.member,
                             time: currentTime
