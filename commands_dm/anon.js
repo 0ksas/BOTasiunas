@@ -6,8 +6,9 @@ module.exports = {
             const serverID = args.shift();
             var channelName = "";
 
+            //Add checking if user belongs to the server
+
             const server = client.guilds.cache.find(guild => guild.id == serverID);
-            //console.log(client.guilds)
             var guild = client.guilds.cache.find(guild => guild.name == "PS'ai");
 
             if (server) {

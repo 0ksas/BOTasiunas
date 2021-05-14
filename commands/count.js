@@ -26,13 +26,10 @@ module.exports = {
                 message.channel.send(user + " Count of users in " + roleName + ": " + count); //sends message
             } else {
                 const fetch = require('node-fetch');
-                let credentials = new Credentials();
                 let url = `https://api.tenor.com/v1/search?q=${count}&key=H13UA21L5LHF&limit=1`
                 let response = await fetch(url);
                 let json = await response.json();
-                console.log(json);
                 message.channel.send(json.results[0].url);
-
             }
             
         } else {
