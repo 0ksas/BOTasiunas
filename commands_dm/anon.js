@@ -6,8 +6,6 @@ module.exports = {
             const serverID = args.shift();
             var channelName = "";
 
-            //Add checking if user belongs to the server
-
             const server = client.guilds.cache.find(guild => guild.id == serverID);
             var guild = client.guilds.cache.find(guild => guild.name == "PS'ai");
 
@@ -31,16 +29,23 @@ module.exports = {
                 })
                 channel.send("**[Anonymous message]**\n" + content);
             } else {
-                message.channel.send("You do not belong to the server.");
+                message.channel.send(this.constants.doesNotBelongToServer());
             }
 
         } catch (err) {
             console.error(err)
             console.error(`${args}`)
-            message.channel.send("Something went wrong, make sure you formatted the message correctly and input the right information.\n" +
-                "For more information type '!help'")
+            message.channel.send(this.constants.messageError());
         }
+    },
 
-        
+    constants: {
+        doesNotBelongToServer() {
+            return "You do not belong to the server.";
+        },
+        messageError() {
+            return "Something went wrong, make sure you formatted the message correctly and input the right information.\n" +
+                "For more information type '!help'";
+        }
     }
 }

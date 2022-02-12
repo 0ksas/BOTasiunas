@@ -1,9 +1,15 @@
 module.exports = {
     name: 'sauliunas',
     description: "SaUwUliunas",
-    execute(message, args) {
+    execute(client, message, args) {
         let sauliunasEmoji = message.guild.emojis.cache.find(r => r.name == "mif_Saulinas")
 
-        message.channel.send(`${sauliunasEmoji} As pirma elektronini laiska issiunciau per TelNeta 1996 ${sauliunasEmoji}`, { files: ["./Images/ITT.mp4"] });
+        message.channel.send(this.constants.message(sauliunasEmoji), { files: ["./Images/ITT.mp4"] });
+    },
+
+    constants: {
+        message(emoji) {
+            return `${emoji} As pirma elektronini laiska issiunciau per TelNeta 1996 ${emoji}`;
+        }
     }
 }

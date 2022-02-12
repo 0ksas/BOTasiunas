@@ -1,7 +1,7 @@
 module.exports = {
     name: 'litvinas',
     description: "googlas",
-    execute(message, args) {
+    execute(client, message, args) {
         message.channel.send('https://www.google.lt/');
     }
 }

@@ -1,7 +1,13 @@
-module.exports = {
+ module.exports = {
     name: 'kasuba',
     description: "KašUwUba",
-    execute(message, args) {
-        message.channel.send(":heart: http://www.xn--kauba-wdb.lt/ :heart:", { files: ["./Images/kasuba.jpg"] });
+     execute(client, message, args) {
+         message.channel.send(this.constants.link(), { files: ["./Images/kasuba.jpg"] });
+    },
+
+    constants: {
+        link() {
+            return ':heart: http://www.xn--kauba-wdb.lt/ :heart:'
+        }
     }
 }

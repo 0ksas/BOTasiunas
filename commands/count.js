@@ -1,7 +1,7 @@
 module.exports = {
     name: 'count',
     description: "Outputs the count of specified group",
-    async execute(message, args) {
+    async execute(client, message, args) {
         const Credentials = require('../Credentials/credentials.js')
         let user = message.member;
         user = user.toString();
@@ -18,12 +18,12 @@ module.exports = {
         let role = message.guild.roles.cache.find(role => role.name === roleName);
 
         if (args.length == 0) {
-            message.channel.send(user + " Count of users in the server: " + message.guild.memberCount);
+            message.channel.send(this.constants.countServer(user, message.guild.memberCount));
         } else if (role) {
             await message.guild.members.fetch(); //gets all of the members into the cache
             let count = message.guild.members.cache.filter(m => m.roles.cache.find(r => r.name === roleName)).size; //filters ones who have the given role in their role collection
             if (count > 40) {
-                message.channel.send(user + " Count of users in " + roleName + ": " + count); //sends message
+                message.channel.send(this.constants.countRole(user, roleName, count)); //sends message
             } else {
                 const fetch = require('node-fetch');
                 const credentials = new Credentials();
@@ -34,8 +34,20 @@ module.exports = {
             }
             
         } else {
-            message.channel.send(user + " No such role found.");
+            message.channel.send(this.constants.countRoleNotFound(user));
         }
 
+    },
+
+    constants: {
+        countServer(user, count) {
+            return user + ' Count of users in the server: ' + count;
+        },
+        countRole(user, role, count) {
+            return user + ' Count of users in ' + role + ": " + count;
+        },
+        countRoleNotFound(user) {
+            return user + ' No such role found.';
+        },
     }
 }

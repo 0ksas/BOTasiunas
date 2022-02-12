@@ -1,21 +1,28 @@
 ﻿module.exports = {
     name: 'remove',
     description: "Command to request removal from a group",
-    execute(message, args) {
+    execute(client, message, args) {
         let user = message.member;
         user = user.toString();
-        let tempRole
+        let tempRole;
         let roleName;
-        let adminId = message.guild.roles.cache.find(role => role.name ==="Admin");
-        let modId = message.guild.roles.cache.find(role => role.name ==="Seniūnas");
         for (let i = 1; i <= 5; i++) {
             if (tempRole = message.member.roles.cache.find(role => role.name === (i + " grupė"))) {
                 roleName = (i + " grupė");
                 message.member.roles.remove(tempRole.id);
-                message.channel.send(`${user} has been removed from: ${roleName}`);
+                message.channel.send(this.constants.removed(user, roleName));
                 return;
             }
         }
-        message.channel.send(`${user} You do not belong to any group.`)
+        message.channel.send(this.constants.doNotBelong(user))
+    },
+
+    constants: {
+        removed(user, roleName) {
+            return `${user}, you have been removed from: ${roleName}`;
+        },
+        doNotBelong(user) {
+            return `${user} You do not belong to any group.`;
+        }
     }
 }

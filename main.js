@@ -10,24 +10,30 @@ const savePath = './cache/cache.js';
 const fs = require('fs');
 
 client.commands = new Discord.Collection();
+client.constants = new Discord.Collection();
 
 const messages = new Array();
 var heroedUsers = new Array();
 
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
-const dmCommandFiles = fs.readdirSync('./commands_dm/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 }
 
+const dmCommandFiles = fs.readdirSync('./commands_dm/').filter(file => file.endsWith('.js'));
 for (const file of dmCommandFiles) {
     const command = require(`./commands_dm/${file}`);
     client.commands.set(command.name, command);
 }
 
-client.once('ready', () => {
+const dialogueConstants = fs.readdirSync('./constants/dialogue').filter(file => file.endsWith('.js'));
+for (const file of dialogueConstants) {
+    const constant = require(`./constants/dialogue/${file}`);
+    client.constants.set(constant.name, constant);
+}
 
+client.once('ready', () => {
     try {
         const fs = require('fs');
         if (fs.existsSync(savePath)) {
@@ -39,6 +45,7 @@ client.once('ready', () => {
     } catch (err) {
         console.error(err)
     }
+
     console.log('PS bot is online!');
 });
 
@@ -145,20 +152,19 @@ client.on('ready', () => {
 
 client.on('message', message => {
     if (message.author.bot) return;
-    if (
-        message.channel.type == "dm" &&
-        (message.content.startsWith(prefix) ||
-            message.content.startsWith(mistakePrefix))
-    ) {
-        const args = message.content.slice(prefix.length).split(/ +/);
-        const command = args.shift().toLowerCase();
 
+    const args = message.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    if (message.channel.type == "dm" && (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix))) {
         switch (command) {
             case 'anon':
-                client.commands.get('anon').execute(message, args, client);
+            case 'anonymous':
+                client.commands.get('anon').execute(client, message, args, client);
                 break;
             case 'help':
-                client.commands.get('helpDm').execute(message, args);
+            case 'pagalba':
+                client.commands.get('helpDm').execute(client, message, args);
                 break;
             default:
                 message.channel.send("Unrecognised message.")
@@ -170,58 +176,63 @@ client.on('message', message => {
     messages.push(message)
     
     if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
-
-        const args = message.content.slice(prefix.length).split(/ +/);
-        const command = args.shift().toLowerCase();
-
         switch (command) {
             case 'ping':
-                client.commands.get('ping').execute(message, args);
+                client.commands.get('ping').execute(client, message, args);
                 break;
             case 'help':
-                client.commands.get('help').execute(message, args);
+            case 'pagalba':
+                client.commands.get('help').execute(client, message, args);
                 break;
-            case 'grupė':
-                client.commands.get('grupė').execute(message, args);
+            case 'grupe':
+            case 'group':
+                client.commands.get('grupė').execute(client, message, args);
                 break;
             case 'remove':
-                client.commands.get('remove').execute(message, args)
+            case 'iseiti':
+            case 'pasalinti':
+                client.commands.get('remove').execute(client, message, args);
                 break;
             case 'count':
-                client.commands.get('count').execute(message, args);
+            case 'kiekis':
+                client.commands.get('count').execute(client, message, args);
                 break;
             case 'valaitis':
-                client.commands.get('valaitis').execute(message, args);
+                client.commands.get('valaitis').execute(client, message, args);
                 break;
-            case 'kašuba':
-                client.commands.get('kasuba').execute(message, args)
+            case 'kasuba':
+                client.commands.get('kasuba').execute(client, message, args);
                 break;
-            case 'litvinas':
-                client.commands.get('litvinas').execute(message, args)
-                break;
-            case 'birštunas':
-                client.commands.get('birstunas').execute(message, args)
+            case 'litvinas': 
+                client.commands.get('litvinas').execute(client, message, args);
                 break;
             case 'manifest':
-                client.commands.get('manifest').execute(message, args)
+                client.commands.get('manifest').execute(client, message, args);
                 break;
             case 'viaceslav':
-                client.commands.get('viaceslav').execute(message, args)
+                client.commands.get('viaceslav').execute(client, message, args);
                 break;
             case 'sauliunas':
-                client.commands.get('sauliunas').execute(message, args)
+                client.commands.get('sauliunas').execute(client, message, args);
                 break;
             case 'petrauskas':
-                client.commands.get('petrauskas').execute(message, args)
+                client.commands.get('petrauskas').execute(client, message, args);
                 break;
             case 'topmessage':
-                client.commands.get('topmessage').execute(message, args)
+                client.commands.get('topmessage').execute(client, message, args);
                 break;
             case 'repo':
-                client.commands.get('repo').execute(message, args)
-                break; 
+            case "git":
+            case "source":
+                client.commands.get('repo').execute(client, message, args);
+                break;
         }
     }
+})
+
+client.on('guildMemberAdd', member => {
+    console.log(member + " " + member.username + " joined the server.");
+    member.send(client.constants.get("privateMessages").welcomeMessage);
 })
 
 function saveData(path, array) {
@@ -229,7 +240,7 @@ function saveData(path, array) {
     try {
         fs.writeFileSync(path, JSON.stringify(array));
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 

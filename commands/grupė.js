@@ -1,15 +1,16 @@
 ﻿module.exports = {
     name: 'grupė',
     description: "Assigns a member to the selected group",
-    execute(message, args) {
+    execute(client, message, args) {
         let user = message.member;
         user = user.toString();
 
+        //TODO: make this configurable
         let groupName = args + " grupė"
         let roleObject = message.guild.roles.cache.find(role => role.name === groupName)
 
         if (roleObject === undefined) {
-            message.channel.send(user + " No such group exists.")
+            message.channel.send(this.constants.groupDoesntExits(user))
             return;
         }
 
@@ -21,16 +22,31 @@
         }
 
         if (message.member.roles.cache.find(role => role.name === groupName)) {
-            message.channel.send(user + ' You already belong in that group.');
+            message.channel.send(this.constants.groupAlreadyBelong(user));
         }
         else if (doesBelongToGroup) {
-            message.channel.send(user +' You can only belong in one group.');
+            message.channel.send(this.constants.groupBelongInGroup(user));
         }
         else {
                 message.member.roles.add(roleObject).catch(console.error);
-                message.channel.send(user + " has been added to " + args + " grupė");   
+            message.channel.send(this.constants.groupAddedSuccessfully(user, args));   
         }
         
+    },
+
+    constants: {
+        groupDoesntExits(user) {
+            return user + ' No such group exists.';
+        },
+        groupAlreadyBelong(user) {
+            return user + ' You already belong in that group.';
+        },
+        groupBelongInGroup(user) {
+            return user + ' You can only belong in one group.'
+        },
+        groupAddedSuccessfully(user, args) {
+            return user + ' has been added to ' + args + ' group.';
+        }
     }
 }
 
