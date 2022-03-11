@@ -166,6 +166,9 @@ client.on('message', message => {
             case 'pagalba':
                 client.commands.get('helpDm').execute(client, message, args);
                 break;
+            case 'useractivity':
+                client.commands.get('userActivity').execute(client, message, args);
+                break;
             default:
                 message.channel.send("Unrecognised message.")
                 break;
@@ -174,6 +177,10 @@ client.on('message', message => {
     }
 
     messages.push(message)
+
+    if (message.content.includes('tikslum') && message.channel.id == 922594491083411576) {
+        message.channel.send("Pirmoje užduotyje, tikslumas nėra svarbus.");
+    }
     
     if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
         switch (command) {
