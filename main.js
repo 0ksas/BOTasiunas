@@ -178,8 +178,22 @@ client.on('message', message => {
 
     messages.push(message)
 
-    if (message.content.toLowerCase().includes('tikslum') && message.channel.id == 922594491083411576) {
+    if (message.content.toLowerCase().includes('tikslum')
+        && message.content.toLowerCase().includes('pirm')
+        && message.channel.id == 922594491083411576) {
         message.channel.send("Pirmoje užduotyje, tikslumas nėra svarbus.");
+    }
+
+    if (message.content.toLowerCase().includes('tikslum')
+        && message.content.toLowerCase().includes('antr')
+        && message.channel.id == 922594491083411576) {
+        message.channel.send("Antroje užduotyje, tikslumas yra svarbus, bet ne per daug.");
+    }
+
+    if (message.content.toLowerCase().includes('tikslum')
+        && message.content.toLowerCase().includes('trec')
+        && message.channel.id == 922594491083411576) {
+        message.channel.send("Trečioje užduotyje, tikslumas yra gal svarbus, gal ne.");
     }
     
     if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
