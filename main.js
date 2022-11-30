@@ -231,7 +231,7 @@ client.on('message', message => {
                 break;
         }
     } else {
-        let probability = 0.02;
+        let probability = 0.01;
         let roll = Math.random();
         
         if (roll <= probability) {
