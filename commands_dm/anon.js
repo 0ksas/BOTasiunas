@@ -29,13 +29,13 @@ module.exports = {
                 })
                 channel.send("**[Anonymous message]**\n" + content);
             } else {
-                message.channel.send(this.constants.doesNotBelongToServer());
+                message.author.send(this.constants.doesNotBelongToServer());
             }
 
         } catch (err) {
-            console.error(err)
-            console.error(`${args}`)
-            message.channel.send(this.constants.messageError());
+            console.error(err);
+            console.error(`${args}`);
+            message.author.send(this.constants.messageError());
         }
     },
 

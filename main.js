@@ -160,7 +160,7 @@ client.on('message', message => {
         switch (command) {
             case 'anon':
             case 'anonymous':
-                client.commands.get('anon').execute(client, message, args, client);
+                client.commands.get('anon').execute(message, args, client);
                 break;
             case 'help':
             case 'pagalba':
@@ -177,24 +177,6 @@ client.on('message', message => {
     }
 
     messages.push(message)
-
-    if (message.content.toLowerCase().includes('tikslum')
-        && message.content.toLowerCase().includes('pirm')
-        && message.channel.id == 922594491083411576) {
-        message.channel.send("Pirmoje užduotyje, tikslumas nėra svarbus.");
-    }
-
-    if (message.content.toLowerCase().includes('tikslum')
-        && message.content.toLowerCase().includes('antr')
-        && message.channel.id == 922594491083411576) {
-        message.channel.send("Antroje užduotyje, tikslumas yra svarbus, bet ne per daug.");
-    }
-
-    if (message.content.toLowerCase().includes('tikslum')
-        && message.content.toLowerCase().includes('trec')
-        && message.channel.id == 922594491083411576) {
-        message.channel.send("Trečioje užduotyje, tikslumas yra gal svarbus, gal ne.");
-    }
     
     if (message.content.startsWith(prefix) || message.content.startsWith(mistakePrefix)) {
         switch (command) {
@@ -247,6 +229,13 @@ client.on('message', message => {
             case "source":
                 client.commands.get('repo').execute(client, message, args);
                 break;
+        }
+    } else {
+        let probability = 0.02;
+        let roll = Math.random();
+        
+        if (roll <= probability) {
+            message.channel.send(`${message.author} čiaupkis`);
         }
     }
 })
