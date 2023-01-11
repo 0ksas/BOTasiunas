@@ -1,19 +1,21 @@
+const { Configuration, OpenAIApi } = require("openai");
+
 module.exports = {
     name: 'question',
-    description: "Outputs the count of specified group",
+    description: "Responds to a given question with a ChatGPT generated answer",
     async execute(client, message, args) {
-        let question = "";
 
-        let i = 0;
-        args.forEach(element => {
-            if (i == 0) {
-                question += element
-            } else {
-                question = question + " " + element
-            }
-            i++;
-        })
-
-        console.log(question)
+        const configuration = new Configuration({
+            apiKey: "Nuosavas OpenAI key, probably needs different solution"
+        });
+        
+        const openai = new OpenAIApi(configuration);
+        
+        const completion = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: args.join(" "),
+            max_tokens: 200,
+        });
+        message.channel.send(completion.data.choices[0].text);
     }
 }
