@@ -8,6 +8,7 @@ const prefix = '!';
 const mistakePrefix = 'Ą';
 const savePath = './cache/cache.js';
 const fs = require('fs');
+const { replies } = require('./constants/randomReplies.js');
 
 client.commands = new Discord.Collection();
 client.constants = new Discord.Collection();
@@ -27,9 +28,9 @@ for (const file of dmCommandFiles) {
     client.commands.set(command.name, command);
 }
 
-const dialogueConstants = fs.readdirSync('./constants/dialogue').filter(file => file.endsWith('.js'));
+const dialogueConstants = fs.readdirSync('./constants/').filter(file => file.endsWith('.js'));
 for (const file of dialogueConstants) {
-    const constant = require(`./constants/dialogue/${file}`);
+    const constant = require(`./constants/${file}`);
     client.constants.set(constant.name, constant);
 }
 
@@ -230,12 +231,15 @@ client.on('message', message => {
                 client.commands.get('repo').execute(client, message, args);
                 break;
         }
+    } else if (message.content.startsWith(client.user.toString())) {        
+        client.commands.get('question').execute(client, message, args);
     } else {
         let probability = 0.01;
         let roll = Math.random();
-        
         if (roll <= probability) {
-            message.channel.send(`${message.author} čiaupkis`);
+            insults = client.constants.get("randomReplies").replies
+            text = insults[Math.floor(Math.random() * insults.length)]
+            message.channel.send(`${message.author} ${text}`);
         }
     }
 })
