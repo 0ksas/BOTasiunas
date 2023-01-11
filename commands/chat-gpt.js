@@ -14,7 +14,7 @@ module.exports = {
             const completion = await openai.createCompletion({
                 model: "text-davinci-003",
                 prompt: args.join(" "),
-                max_tokens: 200,
+                max_tokens: 1000,
             });
             message.channel.send(completion.data.choices[0].text);
         } catch (e) {
