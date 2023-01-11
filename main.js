@@ -8,7 +8,6 @@ const prefix = '!';
 const mistakePrefix = 'Ą';
 const savePath = './cache/cache.js';
 const fs = require('fs');
-const { replies } = require('./constants/randomReplies.js');
 
 client.commands = new Discord.Collection();
 client.constants = new Discord.Collection();
@@ -258,5 +257,5 @@ function saveData(path, array) {
     }
 }
 
-const credentials = new Credentials();
-client.login(credentials.login);
+client.credentials = new Credentials();
+client.login(client.credentials.login);

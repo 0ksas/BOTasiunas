@@ -6,7 +6,7 @@ module.exports = {
     async execute(client, message, args) {
 
         const configuration = new Configuration({
-            apiKey: "Nuosavas OpenAI key, probably needs different solution"
+            apiKey: client.credentials.openAiKey
         });
         
         const openai = new OpenAIApi(configuration);
