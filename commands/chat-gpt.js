@@ -8,14 +8,17 @@ module.exports = {
         const configuration = new Configuration({
             apiKey: client.credentials.openAiKey
         });
-        
+
         const openai = new OpenAIApi(configuration);
-        
-        const completion = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: args.join(" "),
-            max_tokens: 200,
-        });
-        message.channel.send(completion.data.choices[0].text);
+        try {
+            const completion = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: args.join(" "),
+                max_tokens: 200,
+            });
+            message.channel.send(completion.data.choices[0].text);
+        } catch (e) {
+            message.channel.send("Failed to get reply");
+        }
     }
 }
