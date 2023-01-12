@@ -16,9 +16,15 @@ module.exports = {
                 prompt: args.join(" "),
                 max_tokens: 1000,
             });
-            message.channel.send(completion.data.choices[0].text);
+
+
+            if (completion.data.choices[0].text) {
+                message.channel.send(`${message.author} ${completion.data.choices[0].text}`);
+            } else {
+                message.channel.send(`${message.author} Question response is empty`);
+            }
         } catch (e) {
-            message.channel.send("Failed to get reply");
+            message.channel.send(`${message.author} failed to get reply`);
         }
     }
 }
