@@ -18,10 +18,10 @@ module.exports = {
             });
 
 
-            if (completion.data.choices[0].text) {
+            if (completion.data.choices[0].text && completion.data.choices[0].text.length <= 2000) {
                 message.channel.send(`${message.author} ${completion.data.choices[0].text}`);
             } else {
-                message.channel.send(`${message.author} Question response is empty`);
+                message.channel.send(`${message.author} Question response is invalid.`);
             }
         } catch (e) {
             message.channel.send(`${message.author} failed to get reply`);
