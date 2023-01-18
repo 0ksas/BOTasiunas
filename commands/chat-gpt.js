@@ -17,8 +17,8 @@ module.exports = {
                 max_tokens: 1000,
             });
 
-
-            if (completion.data.choices[0].text && completion.data.choices[0].text.length <= 2000) {
+            reponse = completion.data.choices[0].text.trim()
+            if (reponse && reponse.length() <= 2000) {
                 message.channel.send(`${message.author} ${completion.data.choices[0].text}`);
             } else {
                 message.channel.send(`${message.author} Question response is invalid.`);
