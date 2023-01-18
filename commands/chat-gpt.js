@@ -18,12 +18,13 @@ module.exports = {
             });
 
             reponse = completion.data.choices[0].text.trim()
-            if (reponse && reponse.length() <= 2000) {
+            if (reponse && reponse.length <= 2000) {
                 message.channel.send(`${message.author} ${completion.data.choices[0].text}`);
             } else {
                 message.channel.send(`${message.author} Question response is invalid.`);
             }
         } catch (e) {
+            console.log(e)
             message.channel.send(`${message.author} failed to get reply`);
         }
     }
