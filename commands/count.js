@@ -17,7 +17,14 @@ module.exports = {
         })
         let role = message.guild.roles.cache.find(role => role.name === roleName);
 
-        if (args.length == 0 || role) {
+        if (args.length == 0) {
+            const fetch = require('node-fetch');
+            const credentials = new Credentials();
+            let url = `https://api.tenor.com/v1/search?q=${message.guild.memberCount}&key=${credentials.tenor}&limit=1`
+            let response = await fetch(url);
+            let json = await response.json();
+            message.channel.send(json.results[0].url);
+        } else if (role) {
             await message.guild.members.fetch(); //gets all of the members into the cache
             let count = message.guild.members.cache.filter(m => m.roles.cache.find(r => r.name === roleName)).size; //filters ones who have the given role in their role collection
             const fetch = require('node-fetch');
@@ -29,9 +36,8 @@ module.exports = {
         } else {
             message.channel.send(this.constants.countRoleNotFound(user));
         }
-
     },
-
+    
     constants: {
         countServer(user, count) {
             return user + ' Count of users in the server: ' + count;
