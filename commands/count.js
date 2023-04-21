@@ -17,22 +17,15 @@ module.exports = {
         })
         let role = message.guild.roles.cache.find(role => role.name === roleName);
 
-        if (args.length == 0) {
-            message.channel.send(this.constants.countServer(user, message.guild.memberCount));
-        } else if (role) {
+        if (args.length == 0 || role) {
             await message.guild.members.fetch(); //gets all of the members into the cache
             let count = message.guild.members.cache.filter(m => m.roles.cache.find(r => r.name === roleName)).size; //filters ones who have the given role in their role collection
-            if (count > 40) {
-                message.channel.send(this.constants.countRole(user, roleName, count)); //sends message
-            } else {
-                const fetch = require('node-fetch');
-                const credentials = new Credentials();
-                let url = `https://api.tenor.com/v1/search?q=${count}&key=${credentials.tenor}&limit=1`
-                let response = await fetch(url);
-                let json = await response.json();
-                message.channel.send(json.results[0].url);
-            }
-            
+            const fetch = require('node-fetch');
+            const credentials = new Credentials();
+            let url = `https://api.tenor.com/v1/search?q=${count}&key=${credentials.tenor}&limit=1`
+            let response = await fetch(url);
+            let json = await response.json();
+            message.channel.send(json.results[0].url);
         } else {
             message.channel.send(this.constants.countRoleNotFound(user));
         }
